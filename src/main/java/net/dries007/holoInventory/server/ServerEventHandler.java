@@ -59,9 +59,9 @@ public class ServerEventHandler
     public void event(PlayerInteractEvent event)
     {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
-        if (banUsers.contains(event.entityPlayer.getDisplayName()))
+        if (banUsers.contains(event.entityPlayer.getDisplayNameString()))
         {
-            banUsers.remove(event.entityPlayer.getDisplayName());
+            banUsers.remove(event.entityPlayer.getDisplayNameString());
             event.setCanceled(true);
 
             TileEntity te = event.entity.worldObj.getTileEntity(event.pos);
@@ -77,11 +77,11 @@ public class ServerEventHandler
             HoloInventory.getConfig().overrideBannedThings();
         }
 
-        if (overrideUsers.containsKey(event.entityPlayer.getDisplayName()))
+        if (overrideUsers.containsKey(event.entityPlayer.getDisplayNameString()))
         {
             if (FMLCommonHandler.instance().getEffectiveSide().isClient()) return;
 
-            String nameOverride = overrideUsers.get(event.entityPlayer.getDisplayName());
+            String nameOverride = overrideUsers.get(event.entityPlayer.getDisplayNameString());
             overrideUsers.remove(event.entityPlayer.getDisplayName());
             event.setCanceled(true);
 
