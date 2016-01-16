@@ -42,10 +42,8 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL12;
-
 import java.text.DecimalFormat;
 import java.util.*;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer
@@ -77,6 +75,7 @@ public class Renderer
         try
         {
             doEvent();
+    
         }
         catch (Exception e)
         {
@@ -421,17 +420,25 @@ public class Renderer
     private void renderItem(ItemStack itemStack, int column, int row, int stackSize)
     {
     	RenderManager instance = Minecraft.getMinecraft().getRenderManager();
-    	 
+    	 if(instance == null){
+    		 System.out.println("render man null");
+    		 return;
+    	 }
         RenderHelper.enableStandardItemLighting();
         glPushMatrix();
+        /*
         glTranslatef(maxWith - ((column + 0.2f) * blockScale * 0.6f), maxHeight - ((row + 0.05f) * blockScale * 0.6f), 0f);
         glScalef(blockScale, blockScale, blockScale);
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics) glRotatef(HoloInventory.getConfig().rotateItems ? timeD : 0f, 0.0F, 1.0F, 0.0F);
         else glRotatef(instance.playerViewY, 0.0F, 1.0F, 0.0F);
+        */
+        
         customitem.setEntityItemStack(itemStack);
         //ClientHandler.RENDER_ITEM.renderItemIntoGUI(customitem, 0,0);//.doRender(customitem, 0, 0, 0, 0, 0);
-       // if (itemStack.hasEffect(0)) glDisable(GL_LIGHTING);
-        instance.renderEntitySimple(customitem, 0);
+        // if (itemStack.hasEffect(0)) glDisable(GL_LIGHTING);
+        
+        ClientHandler.RENDER_ITEM.renderItemIntoGUI(itemStack, column,row);
+        //instance.renderEntitySimple(customitem,  System.nanoTime());
      
         glPopMatrix();
         RenderHelper.disableStandardItemLighting();
