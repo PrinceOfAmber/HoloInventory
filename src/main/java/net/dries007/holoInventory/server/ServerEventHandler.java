@@ -39,12 +39,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +64,7 @@ public class ServerEventHandler
             banUsers.remove(event.entityPlayer.getDisplayName());
             event.setCanceled(true);
 
-            TileEntity te = event.entity.worldObj.getTileEntity(event.x, event.y, event.z);
+            TileEntity te = event.entity.worldObj.getTileEntity(event.pos);
             if (Helper.weWant(te))
             {
                 HoloInventory.getConfig().bannedTiles.add(te.getClass().getCanonicalName());
@@ -85,13 +85,13 @@ public class ServerEventHandler
             overrideUsers.remove(event.entityPlayer.getDisplayName());
             event.setCanceled(true);
 
-            TileEntity te = event.entity.worldObj.getTileEntity(event.x, event.y, event.z);
+            TileEntity te = event.entity.worldObj.getTileEntity(event.pos);
             if (Helper.weWant(te))
             {
                 String name = null;
                 if (te instanceof BlockJukebox.TileEntityJukebox) name = Data.JUKEBOX_NAME;
-                else if (te instanceof IInventory) name = ((IInventory) te).getInventoryName();
-                else if (te instanceof TileEntityEnderChest) name = event.entityPlayer.getInventoryEnderChest().getInventoryName();
+                else if (te instanceof IInventory) name = ((IInventory) te).getName();
+                else if (te instanceof TileEntityEnderChest) name = event.entityPlayer.getInventoryEnderChest().getName();
 
                 HoloInventory.getSnw().sendTo(new RenameMessage(name == null ? "" : name, nameOverride), (EntityPlayerMP) event.entityPlayer);
                 event.entityPlayer.addChatComponentMessage(new ChatComponentText(te.getClass().getCanonicalName() + " will now be named " + nameOverride));
@@ -141,9 +141,10 @@ public class ServerEventHandler
                 switch (mo.typeOfHit)
                 {
                     case BLOCK:
-                        Coord coord = new Coord(world.provider.dimensionId, mo);
+                        BlockPos pos = mo.getBlockPos();
+                        Coord coord = new Coord(world.provider.getDimensionId(), mo);
                         int x = (int) coord.x, y = (int) coord.y, z = (int) coord.z;
-                        TileEntity te = world.getTileEntity(x, y, z);
+                        TileEntity te = world.getTileEntity(pos);
                         if (Helper.weWant(te))
                         {
                             checkForChangedType(coord.hashCode(), te);
@@ -154,14 +155,20 @@ public class ServerEventHandler
                             }
                             else if (te instanceof TileEntityChest)
                             {
-                                Block block = world.getBlock(x, y, z);
+                                Block block = world.getBlockState(pos) == null ? null : world.getBlockState(mo.getBlockPos()).getBlock();
                                 TileEntityChest teChest = (TileEntityChest) te;
                                 IInventory inventory = teChest;
+                                
+                                BlockPos east = pos.east();
+                                BlockPos south = pos.south();
+                                BlockPos west = pos.west();
+                                BlockPos north = pos.north();
+                                
 
-                                if (world.getBlock(x, y, z + 1) == block) inventory = new InventoryLargeChest("container.chestDouble", teChest, (TileEntityChest) world.getTileEntity(x, y, z + 1));
-                                else if (world.getBlock(x - 1, y, z) == block) inventory = new InventoryLargeChest("container.chestDouble", (TileEntityChest) world.getTileEntity(x - 1, y, z), teChest);
-                                else if (world.getBlock(x, y, z - 1) == block) inventory = new InventoryLargeChest("container.chestDouble", (TileEntityChest) world.getTileEntity(x, y, z - 1), teChest);
-                                else if (world.getBlock(x + 1, y, z) == block) inventory = new InventoryLargeChest("container.chestDouble", teChest, (TileEntityChest) world.getTileEntity(x + 1, y, z));
+                                if (world.getBlockState(north).getBlock() == block) inventory = new InventoryLargeChest("container.chestDouble", teChest, (TileEntityChest) world.getTileEntity(north));
+                                else if (world.getBlockState(south).getBlock() == block) inventory = new InventoryLargeChest("container.chestDouble", (TileEntityChest) world.getTileEntity(south), teChest);
+                                else if (world.getBlockState(east).getBlock() == block) inventory = new InventoryLargeChest("container.chestDouble", (TileEntityChest) world.getTileEntity(east), teChest);
+                                else if (world.getBlockState(west).getBlock() == block) inventory = new InventoryLargeChest("container.chestDouble", teChest, (TileEntityChest) world.getTileEntity(west));
 
                                 doStuff(coord.hashCode(), player, inventory);
                             }
@@ -176,7 +183,8 @@ public class ServerEventHandler
                             else if (te instanceof BlockJukebox.TileEntityJukebox)
                             {
                                 BlockJukebox.TileEntityJukebox realTe = ((BlockJukebox.TileEntityJukebox) te);
-                                doStuff(coord.hashCode(), player, Data.JUKEBOX_NAME, realTe.func_145856_a());
+                               
+                                doStuff(coord.hashCode(), player, Data.JUKEBOX_NAME, realTe.getRecord());
                             }
                             else
                             {
