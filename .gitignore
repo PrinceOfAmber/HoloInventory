@@ -8,3 +8,8 @@ out
 .idea
 version.*.txt
 /bin/
+
+.classpath
+.project
+.settings/
+run/
