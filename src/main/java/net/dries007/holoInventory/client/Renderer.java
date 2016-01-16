@@ -93,13 +93,20 @@ public class Renderer
         Minecraft mc = Minecraft.getMinecraft();
         //if (HoloInventory.getConfig().keyMode == 2 && !KeyManager.key.getIsKeyPressed()) return;
         //if (HoloInventory.getConfig().keyMode == 3 && KeyManager.key.getIsKeyPressed()) return;
-        if (mc.renderEngine == null || RenderManager.instance == null || RenderManager.instance.getFontRenderer() == null || mc.gameSettings.thirdPersonView != 0 || mc.objectMouseOver == null) return;
-        coord = new Coord(mc.theWorld.provider.dimensionId, mc.objectMouseOver);
+        
+        // RenderManager.instance == null || RenderManager.instance.getFontRenderer() == null || // dont exist
+        if (mc.renderEngine == null || mc.gameSettings.thirdPersonView != 0 || mc.objectMouseOver == null
+        		|| mc.objectMouseOver.getBlockPos() == null)
+        {
+        	return;
+        }
+        coord = new Coord(mc.theWorld.provider.getDimensionId(), mc.objectMouseOver);
+       
         switch (mc.objectMouseOver.typeOfHit)
         {
             case BLOCK:
                 // Remove if there is no longer a TE there
-                TileEntity te = mc.theWorld.getTileEntity((int) coord.x, (int) coord.y, (int) coord.z);
+                TileEntity te = mc.theWorld.getTileEntity( mc.objectMouseOver.getBlockPos());
                 if (Helper.weWant(te))
                 {
                     String clazz = te.getClass().getCanonicalName();
@@ -135,7 +142,7 @@ public class Renderer
                     // Make & store request
                     if (!requestMap.containsKey(id))
                     {
-                        HoloInventory.getSnw().sendToServer(new EntityRequestMessage(mc.theWorld.provider.dimensionId, id));
+                        HoloInventory.getSnw().sendToServer(new EntityRequestMessage(mc.theWorld.provider.getDimensionId(), id));
                         requestMap.put(id, mc.theWorld.getTotalWorldTime());
                     }
                     // Remove old request so that we get updated info next render tick
@@ -344,10 +351,12 @@ public class Renderer
      * @param depth Shift towards the player if negative
      */
     private void moveAndRotate(double depth)
-    {
-        glTranslated(coord.x - RenderManager.renderPosX, coord.y - RenderManager.renderPosY, coord.z - RenderManager.renderPosZ);
-        glRotatef(-RenderManager.instance.playerViewY, 0.0F, 0.5F, 0.0F);
-        glRotatef(RenderManager.instance.playerViewX, 0.5F, 0.0F, 0.0F);
+    { 
+    	RenderManager instance = Minecraft.getMinecraft().getRenderManager();
+    	System.out.println("TODO: renderPosX is private now ..??");
+        //glTranslated(coord.x - instance.renderPosX, coord.y - instance.renderPosY, coord.z - instance.renderPosZ);
+        glRotatef(-instance.playerViewY, 0.0F, 0.5F, 0.0F);
+        glRotatef(instance.playerViewX, 0.5F, 0.0F, 0.0F);
         glTranslated(0, 0, depth);
     }
 
@@ -411,15 +420,19 @@ public class Renderer
      */
     private void renderItem(ItemStack itemStack, int column, int row, int stackSize)
     {
+    	RenderManager instance = Minecraft.getMinecraft().getRenderManager();
+    	 
         RenderHelper.enableStandardItemLighting();
         glPushMatrix();
         glTranslatef(maxWith - ((column + 0.2f) * blockScale * 0.6f), maxHeight - ((row + 0.05f) * blockScale * 0.6f), 0f);
         glScalef(blockScale, blockScale, blockScale);
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics) glRotatef(HoloInventory.getConfig().rotateItems ? timeD : 0f, 0.0F, 1.0F, 0.0F);
-        else glRotatef(RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
+        else glRotatef(instance.playerViewY, 0.0F, 1.0F, 0.0F);
         customitem.setEntityItemStack(itemStack);
-        ClientHandler.RENDER_ITEM.doRender(customitem, 0, 0, 0, 0, 0);
-        if (itemStack.hasEffect(0)) glDisable(GL_LIGHTING);
+        //ClientHandler.RENDER_ITEM.renderItemIntoGUI(customitem, 0,0);//.doRender(customitem, 0, 0, 0, 0, 0);
+       // if (itemStack.hasEffect(0)) glDisable(GL_LIGHTING);
+        instance.renderEntitySimple(customitem, 0);
+     
         glPopMatrix();
         RenderHelper.disableStandardItemLighting();
         if (renderText && !(itemStack.getMaxStackSize() == 1 && itemStack.stackSize == 1))
@@ -431,7 +444,7 @@ public class Renderer
             glScalef(0.03f, 0.03f, 0.03f);
             glRotatef(180, 0.0F, 0.0F, 1.0F);
             glTranslatef(-1f, 1f, 0f);
-            RenderManager.instance.getFontRenderer().drawString(doStackSizeCrap(stackSize), 0, 0, TEXTCOLOR, true);
+            instance.getFontRenderer().drawString(doStackSizeCrap(stackSize), 0, 0, TEXTCOLOR, true);
             glDisable(GL12.GL_RESCALE_NORMAL);
             glEnable(GL_DEPTH_TEST);
             glPopMatrix();
@@ -440,6 +453,8 @@ public class Renderer
 
     private void renderBG()
     {
+    	System.out.println("renderBG disabled");
+    	/*
         glPushMatrix();
         glEnable(GL12.GL_RESCALE_NORMAL);
         glDisable(GL_DEPTH_TEST);
@@ -460,10 +475,13 @@ public class Renderer
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_2D);
         glPopMatrix();
+        */
     }
 
     private void renderName(String name)
     {
+    	RenderManager instance = Minecraft.getMinecraft().getRenderManager();
+    	
         if (HoloInventory.getConfig().nameOverrides.containsKey(name)) name = HoloInventory.getConfig().nameOverrides.get(name);
         else name = StatCollector.translateToLocal(name);
         glPushMatrix();
@@ -478,7 +496,7 @@ public class Renderer
         glTranslated(3f * name.length(), 0f, 0f);
         glRotatef(180, 0.0F, 0.0F, 1.0F);
         glTranslatef(-1f, 1f, 0f);
-        RenderManager.instance.getFontRenderer().drawString(name, 0, 0, TEXTCOLOR, true);
+        instance.getFontRenderer().drawString(name, 0, 0, TEXTCOLOR, true);
 
         glDisable(GL12.GL_RESCALE_NORMAL);
         glEnable(GL_TEXTURE_2D);
@@ -488,8 +506,12 @@ public class Renderer
 
     private double distance()
     {
+    	System.out.println("faking disatance");
+    	return 2;
+    	/*
         return Math.sqrt((coord.x - RenderManager.renderPosX) * (coord.x - RenderManager.renderPosX) +
                 (coord.y - RenderManager.renderPosY) * (coord.y - RenderManager.renderPosY) +
                 (coord.z - RenderManager.renderPosZ) * (coord.z - RenderManager.renderPosZ));
+                */
     }
 }
