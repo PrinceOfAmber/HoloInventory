@@ -73,14 +73,15 @@ public class CommandHoloInventory extends CommandBase
                 if (isOp(sender)) return getListOfStringsMatchingLastWord(args, "reset", "reload", "overrideName", "ban", "unban");
                 else return getListOfStringsMatchingLastWord(args, "reset", "overrideName");
             case 2:
-                if (isOp(sender) && args[0].equalsIgnoreCase("unban")) return getListOfStringsFromIterableMatchingLastWord(args, getAllList());
+                if (isOp(sender) && args[0].equalsIgnoreCase("unban")) return getListOfStringsMatchingLastWord(args, getAllList());
                 else return null;
         }
     }
 
     private boolean isOp(ICommandSender sender)
     {
-        return MinecraftServer.getServer().isSinglePlayer() || !(sender instanceof EntityPlayerMP) || MinecraftServer.getServer().getConfigurationManager().func_152596_g(((EntityPlayerMP) sender).getGameProfile());
+        return MinecraftServer.getServer().isSinglePlayer() || !(sender instanceof EntityPlayerMP) || 
+        		MinecraftServer.getServer().getConfigurationManager().canSendCommands(((EntityPlayerMP) sender).getGameProfile());
     }
 
     private List<String> getAllList()
@@ -104,7 +105,7 @@ public class CommandHoloInventory extends CommandBase
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void processCommand(ICommandSender sender, String[] args) throws WrongUsageException
     {
         if (args.length == 0)
         {
@@ -143,14 +144,14 @@ public class CommandHoloInventory extends CommandBase
                 String name = stringBuilder.toString().trim();
 
                 sender.addChatMessage(new ChatComponentText("RIGHTclick a block or entity to override the hologram name on that type to " + name));
-                ServerHandler.serverEventHandler.overrideUsers.put(sender.getCommandSenderName(), name);
+                ServerHandler.serverEventHandler.overrideUsers.put(sender.getName(), name);
             }
         }
         else if (args[0].equalsIgnoreCase("ban"))
         {
             if (isOp(sender))
             {
-                ServerHandler.serverEventHandler.banUsers.add(sender.getCommandSenderName());
+                ServerHandler.serverEventHandler.banUsers.add(sender.getName());
                 sender.addChatMessage(new ChatComponentText("RIGHTclick a block or entity to ban the hologram on that type."));
             }
             else
@@ -188,10 +189,10 @@ public class CommandHoloInventory extends CommandBase
         {
             sendHelp(sender);
         }
-    }
+    }  
 
     @Override
-    public int compareTo(Object par1Obj)
+    public int compareTo(ICommand par1Obj)
     {
         return super.compareTo((ICommand) par1Obj);
     }
