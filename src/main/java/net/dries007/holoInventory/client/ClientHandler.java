@@ -22,9 +22,9 @@
 package net.dries007.holoInventory.client;
 
 import com.google.common.base.Joiner;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.dries007.holoInventory.HoloInventory;
 import net.dries007.holoInventory.util.Data;
 import net.minecraft.client.Minecraft;

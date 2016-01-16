@@ -1,7 +1,7 @@
 package net.dries007.holoInventory.compat;
 
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
-import cpw.mods.fml.common.Loader;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

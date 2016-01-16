@@ -21,7 +21,7 @@
 
 package net.dries007.holoInventory.client;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.dries007.holoInventory.HoloInventory;
 import net.dries007.holoInventory.network.EntityRequestMessage;
 import net.dries007.holoInventory.util.Coord;
