@@ -30,6 +30,7 @@ import net.dries007.holoInventory.util.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.util.ChatComponentText;
@@ -37,11 +38,9 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.io.IOUtils;
-
 import java.net.URL;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import static net.dries007.holoInventory.client.ClientHandler.VersionCheck.Result.*;
 import static net.minecraft.event.ClickEvent.Action.OPEN_URL;
 import static net.minecraft.util.EnumChatFormatting.*;
@@ -50,7 +49,9 @@ public class ClientHandler
 {
     public static final VersionCheck VERSION_CHECK = new VersionCheck();
     public static final KeyManager KEY_MANAGER = new KeyManager();
-    public static final RenderItem RENDER_ITEM = new RenderItem()
+    public static final RenderItem RENDER_ITEM = Minecraft.getMinecraft().getRenderItem();
+    		/*new RenderItem(Minecraft.getMinecraft().getTextureManager(), 
+    		new ModelManager(Minecraft.getMinecraft().getTextureMapBlocks()))
     {
         @Override
         public void doRender(EntityItem par1EntityItem, double par2, double par4, double par6, float par8, float par9)
@@ -77,10 +78,10 @@ public class ClientHandler
             return false;
         }
     };
-
+*/
     public void postInit()
     {
-        RENDER_ITEM.setRenderManager(RenderManager.instance);
+        //RENDER_ITEM.setRenderManager(RenderManager.instance);
     }
 
     public static class VersionCheck implements Runnable
@@ -134,10 +135,8 @@ public class ClientHandler
 
     public void init()
     {
-        MinecraftForge.EVENT_BUS.register(Renderer.INSTANCE);
-        FMLCommonHandler.instance().bus().register(Renderer.INSTANCE);
-
-        FMLCommonHandler.instance().bus().register(KEY_MANAGER);
+        MinecraftForge.EVENT_BUS.register(Renderer.INSTANCE); 
+ 
         MinecraftForge.EVENT_BUS.register(KEY_MANAGER);
 
         if (HoloInventory.getConfig().doVersionCheck)
@@ -147,7 +146,7 @@ public class ClientHandler
             vc.setName(Data.MODID + "VersionCheckThread");
             vc.run();
 
-            FMLCommonHandler.instance().bus().register(this);
+            MinecraftForge.EVENT_BUS.register(this);
         }
     }
 
