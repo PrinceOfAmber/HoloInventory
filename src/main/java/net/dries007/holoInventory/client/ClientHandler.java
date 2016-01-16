@@ -49,8 +49,8 @@ public class ClientHandler
 {
     public static final VersionCheck VERSION_CHECK = new VersionCheck();
     public static final KeyManager KEY_MANAGER = new KeyManager();
-    public static final RenderItem RENDER_ITEM = Minecraft.getMinecraft().getRenderItem();
-    		/*new RenderItem(Minecraft.getMinecraft().getTextureManager(), 
+    /*public static final RenderItem RENDER_ITEM = Minecraft.getMinecraft().getRenderItem();
+    		new RenderItem(Minecraft.getMinecraft().getTextureManager(), 
     		new ModelManager(Minecraft.getMinecraft().getTextureMapBlocks()))
     {
         @Override

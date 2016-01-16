@@ -30,6 +30,7 @@ import net.dries007.holoInventory.util.NamedData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IMerchant;
@@ -419,11 +420,16 @@ public class Renderer
      */
     private void renderItem(ItemStack itemStack, int column, int row, int stackSize)
     {
+    	
     	RenderManager instance = Minecraft.getMinecraft().getRenderManager();
-    	 if(instance == null){
-    		 System.out.println("render man null");
-    		 return;
-    	 }
+		if(instance == null){
+			System.out.println("render man null");
+			return;
+		}
+		if(itemStack == null){
+			System.out.println("itemStack  null");
+			return;
+		}
         RenderHelper.enableStandardItemLighting();
         glPushMatrix();
         /*
@@ -436,8 +442,21 @@ public class Renderer
         customitem.setEntityItemStack(itemStack);
         //ClientHandler.RENDER_ITEM.renderItemIntoGUI(customitem, 0,0);//.doRender(customitem, 0, 0, 0, 0, 0);
         // if (itemStack.hasEffect(0)) glDisable(GL_LIGHTING);
+
+//UtilTextureRender.renderItemAt(itemStack, column,row,16);
+        RenderItem RENDER_ITEM = Minecraft.getMinecraft().getRenderItem();
         
-        ClientHandler.RENDER_ITEM.renderItemIntoGUI(itemStack, column,row);
+        System.out.println("Try draw at "+column+row+itemStack.getUnlocalizedName());
+        
+		RENDER_ITEM.renderItemIntoGUI(itemStack,50+ column,50+row);
+		/*//first get texture from item stack
+		IBakedModel iBakedModel = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(stack);
+		TextureAtlasSprite textureAtlasSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(iBakedModel.getTexture().getIconName());
+	  
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+       
+        if(Minecraft.getMinecraft().currentScreen != null)
+        	Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x,y,textureAtlasSprite, dim,dim);   */
         //instance.renderEntitySimple(customitem,  System.nanoTime());
      
         glPopMatrix();
