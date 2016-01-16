@@ -32,15 +32,15 @@ package net.dries007.holoInventory.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.apache.commons.io.IOUtils;
-
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -48,6 +48,9 @@ import java.nio.charset.Charset;
  * Something other than capes for once
  *
  * @author Dries007
+ * 
+ * @author Lothrazar
+ * notes : some stuff disabled ONLY because Game Registry ... getObject not a function anymore
  */
 public class DevPerks
 {
@@ -86,7 +89,7 @@ public class DevPerks
                     JsonObject hat = perk.getAsJsonObject("hat");
                     String name = hat.get("name").getAsString();
                     int meta = hat.has("meta") ? hat.get("meta").getAsInt() : 0;
-                    event.entityPlayer.inventory.armorInventory[3] = new ItemStack(GameData.getItemRegistry().getObject(name), 0, meta);
+                   // event.entityPlayer.inventory.armorInventory[3] = new ItemStack(GameData.getItemRegistry().getObject(name), 0, meta);
                 }
             }
         }
@@ -102,15 +105,15 @@ public class DevPerks
         try
         {
             if (debug) perks = new JsonParser().parse(IOUtils.toString(new URL(PERKS_URL), Charset.forName("UTF-8"))).getAsJsonObject();
-            if (perks.has(event.original.getCommandSenderName()))
+            if (perks.has(event.original.getName()))
             {
-                JsonObject perk = perks.getAsJsonObject(event.original.getCommandSenderName());
+                JsonObject perk = perks.getAsJsonObject(event.original.getName());
                 if (perk.has("hat") && (event.entityPlayer.inventory.armorInventory[3] == null || event.entityPlayer.inventory.armorInventory[3].stackSize == 0))
                 {
                     JsonObject hat = perk.getAsJsonObject("hat");
                     String name = hat.get("name").getAsString();
                     int meta = hat.has("meta") ? hat.get("meta").getAsInt() : 0;
-                    event.entityPlayer.inventory.armorInventory[3] = new ItemStack(GameData.getItemRegistry().getObject(name), 0, meta);
+                  //  event.entityPlayer.inventory.armorInventory[3] = new ItemStack(GameData.getItemRegistry().getObject(name), 0, meta);
                 }
             }
         }
@@ -126,16 +129,17 @@ public class DevPerks
         try
         {
             if (debug) perks = new JsonParser().parse(IOUtils.toString(new URL(PERKS_URL), Charset.forName("UTF-8"))).getAsJsonObject();
-            if (perks.has(event.entityPlayer.getCommandSenderName()))
+            if (perks.has(event.entityPlayer.getName()))
             {
-                JsonObject perk = perks.getAsJsonObject(event.entityPlayer.getCommandSenderName());
+                JsonObject perk = perks.getAsJsonObject(event.entityPlayer.getName());
                 if (perk.has("drop"))
                 {
                     JsonObject drop = perk.getAsJsonObject("drop");
                     String name = drop.get("name").getAsString();
                     int meta = drop.has("meta") ? drop.get("meta").getAsInt() : 0;
                     int size = drop.has("size") ? drop.get("size").getAsInt() : 1;
-                    event.drops.add(new EntityItem(event.entityPlayer.getEntityWorld(), event.entityPlayer.posX, event.entityPlayer.posY, event.entityPlayer.posZ, new ItemStack(GameData.getItemRegistry().getObject(name), size, meta)));
+                   
+                   // event.drops.add(new EntityItem(event.entityPlayer.getEntityWorld(), event.entityPlayer.posX, event.entityPlayer.posY, event.entityPlayer.posZ, new ItemStack(GameData.getItemRegistry().getObject(name), size, meta)));
                 }
             }
         }

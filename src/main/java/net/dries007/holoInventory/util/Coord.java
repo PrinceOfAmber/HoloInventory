@@ -22,7 +22,6 @@
 package net.dries007.holoInventory.util;
 
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class Coord
 {
@@ -38,9 +37,9 @@ public class Coord
         switch (mop.typeOfHit)
         {
             case BLOCK:
-                this.x = mop.blockX;
-                this.y = mop.blockY;
-                this.z = mop.blockZ;
+                this.x = mop.getBlockPos().getX();
+                this.y = mop.getBlockPos().getY();
+                this.z = mop.getBlockPos().getZ();
                 break;
             case ENTITY:
                 this.x = mop.entityHit.posX;
@@ -50,16 +49,7 @@ public class Coord
         }
     }
 
-    public Coord offset(int side)
-    {
-        ForgeDirection dir = ForgeDirection.getOrientation(side);
-        this.x = +dir.offsetX;
-        this.y = +dir.offsetY;
-        this.z = +dir.offsetZ;
-
-        return this;
-    }
-
+ 
     public int hashCode()
     {
         return (int) this.x + ((int) this.z << 8) + ((int) this.y << 16) + (this.dim << 24);

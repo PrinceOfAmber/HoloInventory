@@ -24,6 +24,7 @@ package net.dries007.holoInventory.util;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 public class FakeInventory implements IInventory
 {
@@ -54,11 +55,6 @@ public class FakeInventory implements IInventory
         return null;
     }
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int i)
-    {
-        return null;
-    }
 
     @Override
     public void setInventorySlotContents(int i, ItemStack itemstack)
@@ -67,15 +63,9 @@ public class FakeInventory implements IInventory
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return name;
-    }
-
-    @Override
-    public boolean hasCustomInventoryName()
-    {
-        return false;
     }
 
     @Override
@@ -96,21 +86,55 @@ public class FakeInventory implements IInventory
         return false;
     }
 
-    @Override
-    public void openInventory()
-    {
-
-    }
-
-    @Override
-    public void closeInventory()
-    {
-
-    }
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack)
     {
         return false;
     }
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	@Override
+	public IChatComponent getDisplayName() {
+		return null;
+	}
+
+	@Override
+	public ItemStack removeStackFromSlot(int index) {
+		return null;
+	}
+
+	@Override
+	public void openInventory(EntityPlayer player) {
+		
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer player) {
+		
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+		
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+		
+	}
 }

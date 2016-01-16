@@ -154,7 +154,10 @@ public class Config
         }
 
         debug = configuration.getBoolean("debug", MODID, debug, "Enable debug, use when errors or weird behaviour happens.");
-        if (configuration.getBoolean("sillyness", MODID, true, "Disable sillyness only if you want to piss of the devs XD")) MinecraftForge.EVENT_BUS.register(new DevPerks(debug));
+        if (configuration.getBoolean("sillyness", MODID, true, "Disable sillyness only if you want to piss of the devs XD")) 
+        {	
+        	MinecraftForge.EVENT_BUS.register(new DevPerks(debug));
+        }
 
         save();
     }

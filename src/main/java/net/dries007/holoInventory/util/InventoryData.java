@@ -44,7 +44,7 @@ public class InventoryData
     {
         this.id = id;
         this.te = te;
-        this.name = Strings.nullToEmpty(te.getInventoryName());
+        this.name = Strings.nullToEmpty(te.getName());
         this.type = te.getClass().getCanonicalName();
         if (type == null) type = te.getClass().getName();
     }
