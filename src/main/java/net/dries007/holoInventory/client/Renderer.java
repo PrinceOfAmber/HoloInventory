@@ -215,7 +215,7 @@ public class Renderer
     {
         if (namedData.data == null || namedData.name == null || namedData.data.length == 0) return;
         final double distance = distance();
-        if (distance < 1.5) return;
+        //if (distance < 1.5) return;
 
         List<ItemStack> list;
 
@@ -326,6 +326,7 @@ public class Renderer
 
         // Render items
         int column = 0, row = 0;
+        int size = 16;
         for (ItemStack item : itemStacks)
         {
             int stackSize = item.stackSize;
@@ -335,11 +336,11 @@ public class Renderer
                 item.stackSize = 1;
             }
             renderItem(item, column, row, stackSize);
-            column++;
+            column += size;
             if (column >= maxColumns)
             {
                 column = 0;
-                row++;
+                row += size;
             }
         }
         glPopMatrix();
@@ -448,7 +449,7 @@ public class Renderer
         
         System.out.println("Try draw at "+column+row+itemStack.getUnlocalizedName());
         
-		RENDER_ITEM.renderItemIntoGUI(itemStack,50+ column,50+row);
+		RENDER_ITEM.renderItemIntoGUI(itemStack, row,column);
 		/*//first get texture from item stack
 		IBakedModel iBakedModel = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(stack);
 		TextureAtlasSprite textureAtlasSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(iBakedModel.getTexture().getIconName());
@@ -533,7 +534,7 @@ public class Renderer
     private double distance()
     {
     	System.out.println("faking disatance");
-    	return 2;
+    	return 10;
     	/*
         return Math.sqrt((coord.x - RenderManager.renderPosX) * (coord.x - RenderManager.renderPosX) +
                 (coord.y - RenderManager.renderPosY) * (coord.y - RenderManager.renderPosY) +
