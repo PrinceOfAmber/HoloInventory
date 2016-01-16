@@ -74,14 +74,14 @@ public class EntityRequestMessage implements IMessage
                         return null;
                     }
 
-                    map.put(message.entityId, player.getDisplayName());
+                    map.put(message.entityId, player.getDisplayNameString());
 
                     if (entity instanceof IInventory)
                     {
                         IInventory inventory = (IInventory) entity;
                         NBTTagCompound root = new NBTTagCompound();
                         root.setInteger("id", message.entityId);
-                        root.setString("name", Strings.nullToEmpty(inventory.getInventoryName()));
+                        root.setString("name", Strings.nullToEmpty(inventory.getName()));
                         root.setString("class", entity.getClass().getCanonicalName());
                         NBTTagList list = new NBTTagList();
                         for (int i = 0; i < inventory.getSizeInventory(); i++)
@@ -98,7 +98,7 @@ public class EntityRequestMessage implements IMessage
                     {
                         NBTTagCompound tag = ((IMerchant) entity).getRecipes(player).getRecipiesAsTags();
                         tag.setInteger("id", message.entityId);
-                        tag.setString("name", entity.getCommandSenderName());
+                        tag.setString("name", entity.getName());
                         tag.setString("class", entity.getClass().getCanonicalName());
                         return new MerchantInventoryMessage(tag);
                     }
